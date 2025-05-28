@@ -1597,21 +1597,37 @@ const initialize = () => {
     });
 
     resetAll();
-    updateStatus();
+    // --- 元の updateStatus 関数を修正して弾やタンク描画処理を追加 ---
+const updateStatus = () => {
+    handleHomeButton();
+    registerInput();
+    opSettings();
 
+    let currentTime = (new Date()).getTime();
+    if (gPreviousExecuteTime === undefined) {
+        gPreviousExecuteTime = currentTime;
+    }
+    if ((currentTime - gPreviousExecuteTime) > MAIN_LOOP_INTERVAL_MSEC) {
+        executeCubeCommand();
+        gPreviousExecuteTime = currentTime;
+    }
+
+    const canvas = document.getElementById("operationCanvas");
+    const ctx = canvas.getContext("2d");
+
+    drawBackground(ctx, canvas);
 }
 
 initialize();
 
 //////////////////////////////////ChatGPT///////////////////////////////////////////////////
-// 弾のデータ管理
+// --- 弾・タンク関連の追加処理 ---
 let bullets = [];
 
-// 弾を発射する（仮に固定位置と角度）
 function fireBullet(x, y, angle) {
     const bullet = {
-        x: x,
-        y: y,
+        x,
+        y,
         dx: Math.cos(angle) * 5,
         dy: Math.sin(angle) * 5,
         life: 100
@@ -1619,7 +1635,6 @@ function fireBullet(x, y, angle) {
     bullets.push(bullet);
 }
 
-// 弾を更新（移動と寿命）
 function updateBullets() {
     bullets.forEach(b => {
         b.x += b.dx;
@@ -1629,7 +1644,6 @@ function updateBullets() {
     bullets = bullets.filter(b => b.life > 0);
 }
 
-// 弾を描画
 function drawBullets(ctx) {
     ctx.fillStyle = 'red';
     for (const b of bullets) {
@@ -1639,45 +1653,40 @@ function drawBullets(ctx) {
     }
 }
 
-// タンク（toio風）を描画
 function drawTank(ctx, x, y, angle, color = 'blue') {
     ctx.save();
     ctx.translate(x, y);
     ctx.rotate(angle);
-
-    // 本体
     ctx.fillStyle = color;
     ctx.fillRect(-10, -10, 20, 20);
-
-    // 砲塔（前向き）
     ctx.fillStyle = 'black';
     ctx.fillRect(0, -3, 15, 6);
-
     ctx.restore();
 }
 
-function updateStatus() {
-    const canvas = document.getElementById("operationCanvas");
-    const ctx = canvas.getContext("2d");
 
-    canvas.width = 400;
-    canvas.height = 300;
 
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    // 弾とタンクを描画
+    // --- 弾・タンク表示処理追加 ---
     updateBullets();
     drawBullets(ctx);
+    drawTank(ctx, 100, 150, 0, 'blue');         // Cube1
+    drawTank(ctx, 300, 150, Math.PI, 'green');  // Cube2
 
-    // 仮タンク（Cube1）を描画
-    drawTank(ctx, 100, 150, 0, 'blue');
+    for (let index of [0, 1]) {
+        drawAnalogLeft(index, ctx, canvas);
+        drawAnalogRight(index, ctx, canvas);
+        drawStatus(index, ctx, canvas);
+        drawConnectionState(index, ctx, canvas);
+        drawDescription(index, ctx, canvas);
+    }
 
-    // 仮タンク（Cube2）を描画
-    drawTank(ctx, 300, 150, Math.PI, 'green');
+    window.requestAnimationFrame(updateStatus);
+};
 
-    requestAnimationFrame(updateStatus);
-}
-
+// --- テスト用：2秒ごとに弾を発射 ---
 setInterval(() => {
-    fireBullet(100, 150, 0); // Cube1の位置・角度想定
-}, 3000);
+    fireBullet(100, 150, 0);              // Cube1：右向き
+    fireBullet(300, 150, Math.PI);        // Cube2：左向き
+}, 2000);
+
+// updateStatus は initialize() 内で呼び出されているためここで自動更新が始まる
