@@ -1597,25 +1597,7 @@ const initialize = () => {
     });
 
     resetAll();
-    // --- 元の updateStatus 関数を修正して弾やタンク描画処理を追加 ---
-const updateStatus = () => {
-    handleHomeButton();
-    registerInput();
-    opSettings();
-
-    let currentTime = (new Date()).getTime();
-    if (gPreviousExecuteTime === undefined) {
-        gPreviousExecuteTime = currentTime;
-    }
-    if ((currentTime - gPreviousExecuteTime) > MAIN_LOOP_INTERVAL_MSEC) {
-        executeCubeCommand();
-        gPreviousExecuteTime = currentTime;
-    }
-
-    const canvas = document.getElementById("operationCanvas");
-    const ctx = canvas.getContext("2d");
-
-    drawBackground(ctx, canvas);
+    updateStatus ();
 }
 
 initialize();

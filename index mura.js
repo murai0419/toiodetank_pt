@@ -216,6 +216,7 @@ const gInputStatus = [{
     plusMaxSpeed:0.0,
     leftTrigger:0.0,
     rightTrigger:0.0,
+    shoot: 0.0
 }, {
     xAxisLeft:0.0,
     yAxisLeft:0.0,
@@ -231,6 +232,7 @@ const gInputStatus = [{
     plusMaxSpeed:0.0,
     leftTrigger:0.0,
     rightTrigger:0.0,
+    shoot: 0.0
 }];
 
 const GAMEPAD_LEFT_AXIS_X  = 0;
@@ -403,6 +405,12 @@ const updateStatus = () => {
 
     drawBackground( ctx, canvas );
 
+    // 弾とタンク描画
+    updateBullets();
+    drawBullets(ctx);
+    drawTank(ctx, 100, 150, 0, 'blue');
+    drawTank(ctx, 300, 150, Math.PI, 'green');
+
     for( let index of [ 0, 1 ] ){
         drawAnalogLeft( index, ctx, canvas );
         drawAnalogRight( index, ctx, canvas );
@@ -525,11 +533,14 @@ const opSettings = () => {
         if( gISItem.exchangeCubes === 1 ){
             if( gPreviousExchangeCubes[ index ] === 0 ){
                 // Exchange 0/1 gCubes
-                exchangeCubes();
+                const x = index === 0 ? 100 : 300;
+            const y = 150;
+            const angle = index === 0 ? 0 : Math.PI;
+            fireBullet(x, y, angle);
                 // console.log( "exchangeCubes done ");
             }
         }
-        gPreviousExchangeCubes[ index ] = gISItem.exchangeCubes;
+        gPreviousExchangeCubes[ index ] = gISItem.shoot;
 
         // Switch operation mode
         if( gISItem.switchOperationMode === 1 ){
@@ -1647,93 +1658,7 @@ function drawTank(ctx, x, y, angle, color = 'blue') {
     ctx.restore();
 }
 
-// --- updateStatus に弾・タンク描画追加 ---
-const updateStatus = () => {
-    handleHomeButton();
-    registerInput();
-    opSettings();
-
-    let currentTime = (new Date()).getTime();
-    if (gPreviousExecuteTime === undefined) {
-        gPreviousExecuteTime = currentTime;
-    }
-    if ((currentTime - gPreviousExecuteTime) > MAIN_LOOP_INTERVAL_MSEC) {
-        executeCubeCommand();
-        gPreviousExecuteTime = currentTime;
-    }
-
-    const canvas = document.getElementById("operationCanvas");
-    const ctx = canvas.getContext("2d");
-
-    drawBackground(ctx, canvas);
-
-    // 弾とタンク描画
-    updateBullets();
-    drawBullets(ctx);
-    drawTank(ctx, 100, 150, 0, 'blue');
-    drawTank(ctx, 300, 150, Math.PI, 'green');
-
-    for (let index of [0, 1]) {
-        drawAnalogLeft(index, ctx, canvas);
-        drawAnalogRight(index, ctx, canvas);
-        drawStatus(index, ctx, canvas);
-        drawConnectionState(index, ctx, canvas);
-        drawDescription(index, ctx, canvas);
-    }
-
-    window.requestAnimationFrame(updateStatus);
-};
-
-// --- shoot を gInputStatus に追加 ---
-const gInputStatus = [{
-    xAxisLeft: 0.0,
-    yAxisLeft: 0.0,
-    xAxisLeftBeforeAdjust: undefined,
-    yAxisLeftBeforeAdjust: undefined,
-    xAxisRight: 0.0,
-    yAxisRight: 0.0,
-    maxSpeed: 0.0,
-    switchOperationMode: 0.0,
-    exchangeCubes: 0.0,
-    reset: 0.0,
-    minusMaxSpeed: 0.0,
-    plusMaxSpeed: 0.0,
-    leftTrigger: 0.0,
-    rightTrigger: 0.0,
-    shoot: 0.0
-}, {
-    xAxisLeft: 0.0,
-    yAxisLeft: 0.0,
-    xAxisLeftBeforeAdjust: undefined,
-    yAxisLeftBeforeAdjust: undefined,
-    xAxisRight: 0.0,
-    yAxisRight: 0.0,
-    maxSpeed: 0.0,
-    switchOperationMode: 0.0,
-    exchangeCubes: 0.0,
-    reset: 0.0,
-    minusMaxSpeed: 0.0,
-    plusMaxSpeed: 0.0,
-    leftTrigger: 0.0,
-    rightTrigger: 0.0,
-    shoot: 0.0
-}];
 
 // --- shoot 入力を registerInput に追加 ---
 // 既存の registerInput 関数内、各 gamepad 判定の末尾に以下を追加
 // gISItem.shoot = gamePad.buttons[GAMEPAD_BT_0].value;
-
-// --- opSettings に shoot による fireBullet を追加 ---
-const opSettings = () => {
-    for (let index of [0, 1]) {
-        const gISItem = gInputStatus[index];
-
-        if (gISItem.shoot === 1 && gPreviousShoot[index] === 0) {
-            const x = index === 0 ? 100 : 300;
-            const y = 150;
-            const angle = index === 0 ? 0 : Math.PI;
-            fireBullet(x, y, angle);
-        }
-        gPreviousShoot[index] = gISItem.shoot;
-    }
-};
