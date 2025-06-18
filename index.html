@@ -47,6 +47,16 @@
                         ↓
                     </div>
 
+                     <!-- ゲームステータス画面 -->
+<div id="gameScreen" class="game-screen" style="display: none;">
+  <div class="player-status">
+    <div>Player 1 HP: <span id="hp1">3</span></div>
+    <div>Player 2 HP: <span id="hp2">3</span></div>
+  </div>
+  <div class="game-message" id="gameMessage"></div>
+  <button onclick="resetGame()">リセット</button>
+</div>
+
                     <div class="operationTitleText"> 
                         2. Connect toio™Core Cubes.
                     </div>
@@ -66,15 +76,6 @@
                 </div>
             </td>
         </tr></table>
-        <!-- ゲームステータス画面 -->
-<div id="gameScreen" class="game-screen" style="display: none;">
-  <div class="player-status">
-    <div>Player 1 HP: <span id="hp1">3</span></div>
-    <div>Player 2 HP: <span id="hp2">3</span></div>
-  </div>
-  <div class="game-message" id="gameMessage"></div>
-  <button onclick="resetGame()">リセット</button>
-</div>
 
         <!-- Copywrite -->
         <div id="copyWriteText" class="copyWriteText"> 
@@ -83,5 +84,14 @@
 
         <!-- Script -->
         <script type="text/javascript" src="indexmura.js"></script>
+        <div id="gameScreen" class="game-screen" style="display: none;">
+  <div class="player-status">
+    <div>Player 1 HP: <span id="hp1">3</span></div>
+    <div>Player 2 HP: <span id="hp2">3</span></div>
+  </div>
+  <div class="game-message" id="gameMessage"></div>
+  <button onclick="resetGame()">リセット</button>
+</div>
+
     </body>
 </html>

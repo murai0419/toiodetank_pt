@@ -421,6 +421,18 @@ const updateStatus = () => {
         drawDescription( index, ctx, canvas );
     }
 
+    for (let index of [0, 1]) {
+  if (gInputStatus[index].shoot === 1 && gPreviousShoot[index] === 0) {
+    const x = index === 0 ? 100 : 300;
+    const y = 150;
+    const angle = index === 0 ? 0 : Math.PI;
+    fireBullet(x, y, angle);
+  }
+  gPreviousShoot[index] = gInputStatus[index].shoot;
+}
+handleCollision(); // ★次項参照
+
+
     window.requestAnimationFrame( updateStatus );
 
 }
@@ -1614,6 +1626,13 @@ const initialize = () => {
 initialize();
 
 //////////////////////////////////ChatGPT///////////////////////////////////////////////////
+const checkStartInterval = setInterval(() => {
+  if (isReady4Control(0) && isReady4Control(1)) {
+    startGame();
+    clearInterval(checkStartInterval);
+  }
+}, 1000); // 1秒ごとにチェック
+
 // --- 弾・タンク関連の追加処理 ---
 let bullets = [];
 let gPreviousShoot = [0.0, 0.0];
@@ -1685,3 +1704,34 @@ function damagePlayer(playerNum) {
     document.getElementById("gameMessage").innerText = `Player ${playerNum === 1 ? 2 : 1} Wins!`;
   }
 }
+
+// 仮：A ボタンが押されたら発射フラグを立てる
+gamepadA.onPress(() => shootFlag[payerId] = true);
+
+// 毎フレームチェック
+function updateLoop() {
+  if (shootFlag[playerId]) {
+    shoot(playerId);
+    shootFlag[playerId] = false;
+  }
+  handleCollision(); // 接触判定
+  requestAnimationFrame(updateLoop);
+}
+
+// 命中 ⇒ HP更新＆表示  
+hp[playerNum]--;  
+document.getElementById(`hp${playerNum}`).innerText = hp[playerNum];
+
+// 勝利なら
+document.getElementById("gameMessage").innerText = ...
+
+// 命中 ⇒ HP更新＆表示  
+hp[playerNum]--;  
+document.getElementById(`hp${playerNum}`).innerText = hp[playerNum];
+
+// 勝利なら
+document.getElementById("gameMessage").innerText = ...
+
+// 例：接続成功後に
+startGame();  // この一行がないと思われます
+
