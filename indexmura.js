@@ -1662,3 +1662,15 @@ function drawTank(ctx, x, y, angle, color = 'blue') {
 // --- shoot 入力を registerInput に追加 ---
 // 既存の registerInput 関数内、各 gamepad 判定の末尾に以下を追加
 // gISItem.shoot = gamePad.buttons[GAMEPAD_BT_0].value;
+
+//0618
+function startGame() {
+  document.getElementById("gameScreen").style.display = "block";
+  document.getElementById("titleText").style.display = "none";
+}
+
+function resetGame() {
+  document.getElementById("hp1").innerText = 3;
+  document.getElementById("hp2").innerText = 3;
+  document.getElementById("gameMessage").innerText = "";
+}
