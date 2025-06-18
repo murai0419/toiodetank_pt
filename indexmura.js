@@ -1674,3 +1674,14 @@ function resetGame() {
   document.getElementById("hp2").innerText = 3;
   document.getElementById("gameMessage").innerText = "";
 }
+
+function damagePlayer(playerNum) {
+  const hpId = playerNum === 1 ? "hp1" : "hp2";
+  let hp = parseInt(document.getElementById(hpId).innerText);
+  hp -= 1;
+  document.getElementById(hpId).innerText = hp;
+  
+  if (hp <= 0) {
+    document.getElementById("gameMessage").innerText = `Player ${playerNum === 1 ? 2 : 1} Wins!`;
+  }
+}
