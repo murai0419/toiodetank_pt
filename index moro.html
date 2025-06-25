@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>toioフェンシング対戦</title>
+  <script src="https://unpkg.com/toio.js"></script>
+  <style>
+    body { font-family: sans-serif; text-align: center; padding: 20px; }
+    .controls { display: flex; justify-content: space-around; margin-top: 20px; }
+    button { padding: 10px 20px; margin: 5px; }
+    .score { font-size: 1.5em; margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <h1>🗡️ toio フェンシングバトル</h1>
+  <button onclick="connectCube(1)">🔗 Player 1 キューブ接続</button>
+  <button onclick="connectCube(2)">🔗 Player 2 キューブ接続</button>
+
+  <div class="controls">
+    <div>
+      <h3>Player 1（WASD）</h3>
+      <button onclick="moveCube(1, 'forward')">⬆️</button><br/>
+      <button onclick="moveCube(1, 'left')">⬅️</button>
+      <button onclick="moveCube(1, 'back')">⬇️</button>
+      <button onclick="moveCube(1, 'right')">➡️</button>
+    </div>
+    <div>
+      <h3>Player 2（矢印キー）</h3>
+      <button onclick="moveCube(2, 'forward')">⬆️</button><br/>
+      <button onclick="moveCube(2, 'left')">⬅️</button>
+      <button onclick="moveCube(2, 'back')">⬇️</button>
+      <button onclick="moveCube(2, 'right')">➡️</button>
+    </div>
+  </div>
+
+  <div>
+    <h2>審判：勝者を選んでください</h2>
+    <button onclick="judgeWinner(1)">🏆 Player 1 勝利</button>
+    <button onclick="judgeWinner(2)">🏆 Player 2 勝利</button>
+    <div class="score" id="scoreBoard">スコア: 0 - 0</div>
+    <div id="result"></div>
+  </div>
+
+  <script>
+    let cube1 = null, cube2 = null;
+    let score = [0, 0], round = 0, maxRounds = 3;
+
+    async function connectCube(num) {
+      const cube = new toio.cube.ToioCube();
+      await cube.connectNew();
+      alert(`Player ${num} キューブ接続完了`);
+      if (num === 1) cube1 = cube;
+      else cube2 = cube;
+    }
+
+    function moveCube(player, dir) {
+      const cube = player === 1 ? cube1 : cube2;
+      if (!cube) return;
+
+      let speed = 50, duration = 300;
+      let l = 0, r = 0;
+      switch (dir) {
+        case 'forward': l = r = speed; break;
+        case 'back': l = r = -speed; break;
+        case 'left': l = -speed; r = speed; break;
+        case 'right': l = speed; r = -speed; break;
+      }
+      cube.move(l, r, duration);
+    }
+
+    document.addEventListener("keydown", (e) => {
+      switch (e.key) {
+        case 'w': moveCube(1, 'forward'); break;
+        case 's': moveCube(1, 'back'); break;
+        case 'a': moveCube(1, 'left'); break;
+        case 'd': moveCube(1, 'right'); break;
+        case 'ArrowUp': moveCube(2, 'forward'); break;
+        case 'ArrowDown': moveCube(2, 'back'); break;
+        case 'ArrowLeft': moveCube(2, 'left'); break;
+        case 'ArrowRight': moveCube(2, 'right'); break;
+      }
+    });
+
+    function judgeWinner(winner) {
+      if (round >= maxRounds) {
+        alert("すでに試合終了しています");
+        return;
+      }
+
+      score[winner - 1]++;
+      round++;
+      document.getElementById("scoreBoard").textContent = `スコア: ${score[0]} - ${score[1]}`;
+
+      if (round >= maxRounds) {
+        let result = score[0] === score[1] ? "🤝 引き分け！" :
+                     score[0] > score[1] ? "🏆 Player 1 の勝利！" : "🏆 Player 2 の勝利！";
+        document.getElementById("result").textContent = `結果：${result}`;
+      }
+    }
+  </script>
+</body>
+</html>
