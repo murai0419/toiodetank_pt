@@ -1717,21 +1717,3 @@ function updateLoop() {
   handleCollision(); // 接触判定
   requestAnimationFrame(updateLoop);
 }
-
-// 命中 ⇒ HP更新＆表示  
-hp[playerNum]--;  
-document.getElementById(`hp${playerNum}`).innerText = hp[playerNum];
-
-// 勝利なら
-document.getElementById("gameMessage").innerText = ...
-
-// 命中 ⇒ HP更新＆表示  
-hp[playerNum]--;  
-document.getElementById(`hp${playerNum}`).innerText = hp[playerNum];
-
-// 勝利なら
-document.getElementById("gameMessage").innerText = ...
-
-// 例：接続成功後に
-startGame();  // この一行がないと思われます
-
